@@ -100,7 +100,7 @@
         <div class="text-center mb-5" style="color: #d6bd4d; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);">
             <h1 class="display-4 mb-3">Organize os Cards</h1>
             <p class="lead">Arraste os cards ou use os botões de seta para organizá-los na ordem correta</p>
-            <div class="alert alert-success success-message" role="alert">
+            <div class="alert alert-success success-message" role="alert" style="background-color: #cef872;">
                 Parabéns! Você organizou os cards na ordem correta!
             </div>
         </div>
@@ -279,6 +279,7 @@
 
             if (isOrdered) {
                 successMessage.classList.add('show');
+                document.body.style.backgroundColor = '#28a745'; // Cor de sucesso (verde)
             } else {
                 successMessage.classList.remove('show');
             }
