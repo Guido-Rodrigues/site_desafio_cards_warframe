@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cards Ordenáveis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body {
+          background-color: #00577b;
+          font-family: 'Albertus', Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 768px;
+        }
+        
+        .card {
+            cursor: move;
+            transition: all 0.3s ease-in-out;
+            margin-bottom: 1.5rem;
+            background-color: #cad0d0;
+        }
+        
+        .card:hover {
+            box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+        }
+        
+        .card-controls {
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+            z-index: 2;
+        }
+        
+        .card-controls button {
+            padding: 0.5rem;
+            border-radius: 50%;
+            border: none;
+            background: white;
+            margin-left: 0.25rem;
+            width: 2rem;
+            height: 2rem;
+            line-height: 0;
+            transition: background-color 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .card-controls button:hover:not(:disabled) {
+            background-color: #f8f9fa;
+        }
+        
+        .card-controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .dragging {
+            opacity: 0.5;
+        }
+        
+        .card-wrapper {
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .success-message {
+            display: none;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        .success-message.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit:contain;
+            background-color: #7cb4c4;
+        }
+
+
+    @font-face {
+    font-family: 'Albertus';
+    src: url('./fonts/AlbertusMTStd.otf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+    @font-face {
+    font-family: 'Albertus';
+    src: url('./fonts/AlbertusMTStdItalic.otf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}      
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="text-center mb-5" style="color: #d6bd4d; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);">
+            <h1 class="display-4 mb-3">Organize os Cards</h1>
+            <p class="lead">Arraste os cards ou use os botões de seta para organizá-los na ordem correta</p>
+            <div class="alert alert-success success-message" role="alert">
+                Parabéns! Você organizou os cards na ordem correta!
+            </div>
+        </div>
+
+        <div id="cardsContainer">
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        const cards = [
+            {
+                id: 1,
+                title: 'Xata - Verdade',
+                content: 'Tudo começou muito antes de nós, que agora vivemos nossas vidas perfeitas e monótonas, infinitas. Começou muito antes desses palácios lunares e mercados de corpos girando ao redor de nosso sol dourado. Começou muito antes de nossos pensadores espirais de luz, nossas guerras de radiação, nosso óleo, nossa fumaça. Começou conosco. A continuidade e sua gêmea, a ânsia por explorar. O desejo por margens invisíveis, profundo em nosso sangue. Nenhum juiz, bobo, rainha ou rei pode escapar deste velho instinto. Somos nômades, eternos. E quando nenhum oceano, montanha ou céu podia nos conter... nosso olhar faminto se voltou para as estrelas. À distância, zombavam de nós com sua luz frágil. Piscando e provocando como Ayatans pendurados, para sempre fora de alcance, iluminando a verdade: imortais como somos – morreremos com o sol. É aí que eu entro.',
+                order: 4,
+                image: './img/2-XATA.png'
+            },
+            {
+                id: 2,
+                title: 'Jahu - Forma',
+                content: 'Minha partida foi um dia menos especial que qualquer outro. Quando entrei no Sino, não vi nenhuma multidão através do vidro serigráfico. Nenhum espectador cético. Nenhuma despedida real. Todos tinham desistido de mim e de minhas formulações paradoxais. Os anos perdidos mostraram que o Void era apenas isso. Nada. Sem energia. Sem entrelaçamento. Sem forma. Para ambições espaciais, um beco sem saída. Naquele dia, meu laboratório estava praticamente vazio de testemunhas, principalmente de expectativa. Apenas meus assistentes letárgicos, meu sábio Kavat, Kalymos, e, claro, minha filha. Eu a criei sozinho, mas com vigor inconsistente. Naqueles olhos, os de sua mãe, vi um reflexo terrível. De um homem que não existia. Um homem corajoso e com princípios, prestes a fazer história. Na verdade, ele era um vazio. Um pária, uma piada, um nada. Movido pela minha humilhação. O fracasso me tornara amargo e imprudente. Eu mergulharia nas profundezas para provar que estavam errados. Dei o sinal. Minha filha puxou a alavanca. Kalymos então soltou um rosnado desesperado e rouco. Mas era tarde demais.',
+                order: 2,
+                image: './img/3-JAHU.png'
+
+            },
+            {
+                id: 3,
+                title: 'Vome - Ordem',
+                content: 'Os calibradores abriram a parede entre os mundos, esticando ali uma brecha preta e trapezoidal. Uma porta. Uma boca. Ela se abria na luz da sala, estilhaçando-a em tons deslumbrantes e sobrenaturais. E eu, dentro do Sino, caindo obliquamente em direção a ela, como em uma forca. Massa e tempo ondularam quando um vórtice repentino surgiu diante de mim. Minha cabeça era vapor, meus pés, magneto. O Sino ao meu redor se contorceu como um rato paralisado em uma cobra sinuosa. Cambaleei diante de sua magnitude, tropeçando no vidro serigráfico, e, com isso, desloquei o caminho do Sino através da parede. Ele roçou a membrana dos calibradores, a borda da porta. Nenhuma borda no mundo era tão fina e afiada quanto essa, capaz de dividir até mesmo a luz. Assim que o Sino tocou levemente, o vidro serigráfico foi instantaneamente dilacerado, como carne sob uma lâmina Dax. Minha proteção foi destruída num instante, mas ainda assim eu caí... de lado... para dentro do Void.',
+                order: 6,
+                image: './img/4-VOME.png'
+
+            },
+            {
+                id: 4,
+                title: 'Fass - Caos',
+                content: 'A morte estava sobre mim; eu tinha certeza. Estava de bruços, olhos cerrados. Meu coração pulsando os últimos segundos, meus pulmões queimando os últimos respiros. Uma nostalgia repentina me envolveu. Eu me agarrei desesperadamente a uma memória, de uma tempestade recém-passada, o tom desajeitado de uma canção infantil... mas todos esses pensamentos pareciam escapar da minha mente como fumaça por um respiradouro. Eu morreria vazio. Então percebi outra sensação. Física. Uma teia de dor, agulhas cravando-se em meu braço. De repente percebi: eu estava vivo! Deitado nos estilhaços do vidro serigráfico do Sino! Toquei o chão. Pedra quente. O piso do meu laboratório. Então: eu nunca havia partido... e então: eu havia falhado. De novo. Ouvi um estalo ao meu lado. Alguém pisando nos vidros quebrados. Com grande vergonha, levantei a cabeça, esperando ver minha filha. Mas ao abrir os olhos, não era ela. Era eu.',
+                order: 1,
+                image: './img/5-FASS.png'
+
+            },
+            {
+                id: 5,
+                title: 'Ris - Luz',
+                content: 'A falta de sentido, o paradoxo, a forma vaga sem tempo. Eu estava sozinho, mas não. Pois eu estava ali, confrontado por mim mesmo. Um gêmeo, mas não um irmão. Um reflexo, mas com dimensão. Atrás dele, nenhum horizonte, mas um vasto mar fervilhante de luz cáustica, perfurado aleatoriamente por estrelas negras. E mais perto, ao meu redor, um vendaval de vapor fluindo. Profano em cor, ondulando incessantemente em todas as direções. Eu estava em um precipício de pedra familiar, áspera e sem âncora, como se tivesse sido arrancada diretamente do chão do meu laboratório. Perguntei-me sobre o caminho do vapor, saindo mais, deixando para trás agora as paredes, o ouro filigranado, os cortes raros de mármore de minha casa. Soube de imediato a origem do vapor. Virei-me, de volta para a parede, o trapezoide que eu havia aberto. O vapor irrompia para dentro da brecha, mas não só dali. Pois, ao desviar os olhos, vi o mesmo... um grande fluxo cintilante saindo do meu crânio! Perplexo, encarei minha quimera. Ele falou.',
+                order: 3,
+                image: './img/6-RIS.png'
+
+            },
+            {
+                id: 6,
+                title: 'Khra - Tempo',
+                content: 'Um nome antigo, não pronunciado nos séculos desde que minha mãe me criou. Um sussurro suave, tranquilizador como o olhar de uma víbora. Pequeno Bengel. O outro eu estendeu a mão, oferecendo-me ajuda, deslizando em minha direção sem se mover, como se a distância entre nós estivesse desmoronando. Uma confusão, quase eufórica, preencheu minha mente. Com o resquício de sanidade que restava, decidi que deveria correr pela minha vida. De imediato, frenético e louco, fugi. Mas não progredi. Em vez disso, o mundo comprimiu-se ainda mais ao meu redor, como se eu fosse uma âncora puxando a costa para me alcançar. Quando cheguei à porta, ou melhor, quando a porta chegou a mim, gritei, jogando-me para dentro. Para fora. E ali estava eu. Perdido e reencontrado. Uivando no chão, em harmonia com meu miserável Kalymos. Lacerado na carne e no coração. Espalhado como os estilhaços do Sino. Derramando sangue e estômago no chão frio de pedra. Mas eu o sentia ali, na brecha da parede atrás de mim, ainda estendendo a mão. Eu gritei, mas minha voz desapareceu. Para sempre. Olhei, mas meus olhos nunca veriam novamente. Passei o punho pelo chão, agarrando cacos quebrados. E, ao apertá-los com força, enchi minhas mãos de tinta. "Feche-a!" escrevi.',
+                order: 8,
+                image: './img/7-KHRA.png'
+
+            },
+            {
+                id: 7,
+                title: 'Netra - Decadência',
+                content: 'O tempo, para nós, está quase conquistado. Nosso sagrado Kuva nos move para novas peles. Tornamo-nos insensíveis às nossas trivialidades diárias e anuais... e corrigimos aquelas memórias que trazem sofrimento duradouro. Com todos os nossos erros, nossos excessos, nossa indignidade... não somos assombrados por nada. Mas não para mim. Pois a cada dia que passava, crescia dentro de mim uma ideia tumoral. Era minúscula nos primeiros dias: os dedos pálidos e esticados, decepados no chão... estudados com reverência, com ganância. E inchava maior nos últimos dias: as cúpulas majestosas, as dedicatórias Rail, o desfile profano de Zariman. Eu havia colocado as estrelas ao alcance, mas a que custo? Nunca falei dele, aquele homem, preso na parede. E enquanto incontáveis almas me seguiram, com suas naves saltadoras de luz, peles de onda de campo e instrumentos de múltiplos olhos... nenhuma viu ele. Eu. E por isso não aceitarei o Kuva agora. Nem nunca mais. Esta é a última pele em que estou. Por causa dessa ideia: que não posso ter certeza. Que em toda aquela fumaça, em todo aquele pânico e medo, na luz distorcida e escuridão ofuscante... fui eu quem escapou? Ou o outro?',
+                order: 5,
+                image: './img/8-NETRA.png'
+
+            },
+            {
+                id: 8,
+                title: 'Lohk - Void',
+                content: 'De abismos sombrios, somos observados <br>por aquilo que não tem nome. <br><br>Seus arautos são as estrelas que derruba. <br>O céu e a Terra em chamas. <br><br>Leis corpóreas são desfeitas. <br>Enquanto sóis e amores recuam. <br><br>À loucura cósmica, as leis se submetem. <br>Apesar de mentes resolutas suplicarem. <br><br>No espaço luminoso, estrelas negras. <br>Elas observam, acusam, negam. <br><br>Revolvendo-se, gemendo, este nosso reino. <br>Na loucura, perdido morrerá. <br><br>Hordas de carniça entoam seu profano <br>acordo com planos ancestrais. <br><br>Para formas cósmicas de planos tangentes. <br>Terminamos como começamos.<br><br>',
+                order: 7,
+                image: './img/1-LOHK.png'
+
+            }
+        ];
+
+        function renderCards() {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = '';
+            
+            [...cards]
+                .sort((a, b) => a.order - b.order)
+                .forEach(card => {
+                    const cardHtml = `
+                        <div class="card-wrapper" data-id="${card.id}">
+                            <div class="card">
+                                <div class="card-controls">
+                                    <button onclick="moveCard(${card.id}, 'up')" ${card.order === 1 ? 'disabled' : ''}>
+                                        ↑
+                                    </button>
+                                    <button onclick="moveCard(${card.id}, 'down')" ${card.order === cards.length ? 'disabled' : ''}>
+                                        ↓
+                                    </button>
+                                </div>
+                                <img src="${card.image}" class="card-img-top" alt="${card.title}">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-3">${card.title}</h5>
+                                    <p class="card-text">${card.content}</p>
+                                    <small class="text-muted">Ordem atual: ${card.order}</small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', cardHtml);
+                });
+
+            setupDragAndDrop();
+            checkOrder();
+        }
+
+        function moveCard(cardId, direction) {
+            const card = cards.find(c => c.id === cardId);
+            const currentOrder = card.order;
+            const targetOrder = direction === 'up' ? currentOrder - 1 : currentOrder + 1;
+            
+            if (targetOrder < 1 || targetOrder > cards.length) return;
+            
+            const targetCard = cards.find(c => c.order === targetOrder);
+            if (targetCard) {
+                targetCard.order = currentOrder;
+                card.order = targetOrder;
+                renderCards();
+            }
+        }
+
+        function setupDragAndDrop() {
+            const cardElements = document.querySelectorAll('.card');
+            
+            cardElements.forEach(card => {
+                card.addEventListener('dragstart', handleDragStart);
+                card.addEventListener('dragend', handleDragEnd);
+                card.addEventListener('dragover', handleDragOver);
+                card.addEventListener('drop', handleDrop);
+            });
+        }
+
+        let draggedCard = null;
+
+        function handleDragStart(e) {
+            draggedCard = e.target.closest('.card-wrapper');
+            e.target.classList.add('dragging');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const dropTarget = e.target.closest('.card-wrapper');
+            
+            if (draggedCard && dropTarget && draggedCard !== dropTarget) {
+                const draggedCardId = parseInt(draggedCard.dataset.id);
+                const dropTargetId = parseInt(dropTarget.dataset.id);
+                
+                const card1 = cards.find(c => c.id === draggedCardId);
+                const card2 = cards.find(c => c.id === dropTargetId);
+                
+                const tempOrder = card1.order;
+                card1.order = card2.order;
+                card2.order = tempOrder;
+                
+                renderCards();
+            }
+        }
+
+        function checkOrder() {
+            const successMessage = document.querySelector('.success-message');
+            const isOrdered = cards.every((card, index) => card.order === index + 1);
+            
+            console.log('Está na ordem correta? ', isOrdered);  // Depuração da condição
+
+            if (isOrdered) {
+                successMessage.classList.add('show');
+            } else {
+                successMessage.classList.remove('show');
+            }
+        }
+
+        // Inicializar cards
+        renderCards();
+    </script>
+</body>
+</html>
